@@ -3,6 +3,7 @@ const axios = require('axios') //handle http request sparql queries
 const cors = require ('cors') //front end requests
 const crypto = require('crypto');
 const { createClient } = require('redis');
+const path = require('path');
 
 
 const app = express();
@@ -21,7 +22,9 @@ function getCacheKey(query) {
 }
 
 app.get('/', (req, res) => {
-  res.send('Node server is up and running. Waiting for your queries!');
+ // res.send('Node server is up and running. Waiting for your queries!');
+  res.sendFile('index.html', { root: __dirname });
+
 });
 
 
