@@ -27,6 +27,9 @@ app.get('/', (req, res) => {
 
 });
 
+app.get('model',(req,res) => {
+  res.sendFile()
+});
 
 app.post('/sparql', async (req, res) => {
     const query = req.body.query;
