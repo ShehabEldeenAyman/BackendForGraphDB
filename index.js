@@ -4,6 +4,7 @@ const cors = require ('cors') //front end requests
 const crypto = require('crypto');
 const { createClient } = require('redis');
 const path = require('path');
+const fs = require('fs');
 
 
 const app = express();
@@ -72,6 +73,45 @@ app.post('/sparql', async (req, res) => {
         console.error(err.message);
         res.status(500).json({ error: 'SPARQL query failed' });
     }
+});
+
+
+app.get('/browse', (req, res) => {
+  // Read the folder content
+  fs.readdir(path.join(__dirname, '../RDF-Data/'), (err, files) => {
+    if (err) {
+      return res.status(500).send('Unable to scan directory');
+    }
+
+    // Build a simple HTML listing
+    let fileList = files.map(file => {
+      return `<li><a href="/files/${encodeURIComponent(file)}">${file}</a></li>`;
+    }).join('');
+
+    res.send(`
+      <h1>File List</h1>
+      <ul>${fileList}</ul>
+    `);
+  });
+});
+
+
+// Endpoint to download files
+app.get('/files/:filename', (req, res) => {
+  const filename = req.params.filename;
+
+  // Resolve the full path safely
+  const filePath = path.join(path.join(__dirname, '../RDF-Data/'), filename);
+
+  // Check if the file exists before sending
+  fs.stat(filePath, (err, stats) => {
+    if (err || !stats.isFile()) {
+      return res.status(404).send('File not found');
+    }
+
+    // Send file as attachment (forces download)
+    res.download(filePath, filename);
+  });
 });
 
 const PORT = 3000;
