@@ -27,8 +27,14 @@ app.get('/', (req, res) => {
 
 });
 
-app.get('model',(req,res) => {
-  res.sendFile()
+app.get('/model', (req, res) => {
+  const filePath = '../RDF-Data/timeseriesmapping.ttl';  // Replace with the actual file path
+  res.download(filePath, (err) => {
+    if (err) {
+      console.error('File download error:', err);
+      res.status(500).send('Could not download the file.');
+    }
+  });
 });
 
 app.post('/sparql', async (req, res) => {
