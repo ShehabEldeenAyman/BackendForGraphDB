@@ -77,23 +77,90 @@ app.post('/sparql', async (req, res) => {
 
 
 app.get('/browse', (req, res) => {
-  // Read the folder content
   fs.readdir(path.join(__dirname, '../RDF-Data/'), (err, files) => {
     if (err) {
       return res.status(500).send('Unable to scan directory');
     }
 
-    // Build a simple HTML listing
     let fileList = files.map(file => {
       return `<li><a href="/files/${encodeURIComponent(file)}">${file}</a></li>`;
     }).join('');
 
     res.send(`
-      <h1>File List</h1>
-      <ul>${fileList}</ul>
+      <html>
+        <head>
+          <style>
+            body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 60px auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #2c3e50;
+    }
+
+    p {
+      font-size: 18px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-family: monospace;
+      font-size: 14px;
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1a242f;
+    }
+
+    #results {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    a {
+      color: #3498db;
+    }
+          </style>
+        </head>
+        <body>
+          <h1>File List</h1>
+          <ul>${fileList}</ul>
+        </body>
+      </html>
     `);
   });
 });
+
 
 
 // Endpoint to download files
